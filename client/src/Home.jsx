@@ -1,4 +1,24 @@
+import { useEffect, useState } from "react";
+import { API } from "./api";
+
 const Home = () => {
+  const [data, setData] = useState(null);
+
+  const handleOnClick = async () => {
+    try {
+      const res = await API.get("/api/getCoupon");
+      setData(res.data);
+    } catch (err) {
+      console.log("Error occur while fetching coupon: ", err);
+    }
+  };
+
+  useEffect(() => {
+    if (data) {
+      console.log("Current data is: ", data);
+    }
+  }, [data]);
+
   return (
     <div className="flex flex-col justify-center items-center">
       <div className="bg-[#F97B22] border-2 border-black rounded-sm text-[#FEE8B0] text-center my-8 sm:mt-11 mx-15 sm:mx-60 py-4 px-5">
@@ -13,8 +33,9 @@ const Home = () => {
         </h1>
       </div>
 
-      <div className="bg-[#FEE8B0] border-2 border-black rounded-sm text-[#F97B22] text-center mt-20 sm:mt-30 mx-15 sm:mx-60 py-4 px-5">
+      <div className="bg-[#FEE8B0] border-2 border-black cursor-pointer rounded-sm text-[#F97B22] text-center mt-20 sm:mt-30 mx-15 sm:mx-60 py-4 px-5">
         <button
+          onClick={handleOnClick}
           className="text-2xl font-bold"
           style={{
             WebkitTextStroke: "1px #000",
@@ -25,13 +46,19 @@ const Home = () => {
         </button>
       </div>
 
-      <div className="bg-[#FEE8B0] border-2 border-black rounded-sm text-[#F97B22]  text-center mt-18 sm:mt-25 py-4 px-5">
-        <p>
-          Congratulations !!! coupon created successfully,
-          <br />
-          Here is your coupon: Your Coupon
+      {data ? (
+        <div className="bg-[#FEE8B0] border-2 border-black rounded-sm text-[#F97B22] font-semibold text-center mt-18 sm:mt-25 py-4 px-5">
+          <p>
+            {data.message}
+            <br />
+            {data.coupon}
+          </p>
+        </div>
+      ) : (
+        <p className="bg-[#FEE8B0] border-2 border-black rounded-sm text-[#F97B22] text-center mt-18 sm:mt-25 py-4 px-5">
+          No coupon fetched yet.
         </p>
-      </div>
+      )}
     </div>
   );
 };
